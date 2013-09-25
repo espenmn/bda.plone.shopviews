@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<metadata>
+  <version>1.0</version>
+  <dependencies>
+    <dependency>profile-bda.plone.shopviews:default</dependency>
+    <dependency>profile-plone.app.relationfield:default</dependency>
+  </dependencies>
+</metadata>

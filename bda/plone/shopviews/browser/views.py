@@ -1,147 +1,55 @@
-from zope.interface import implements, Interface, Attribute
+from zope.i18nmessageid import MessageFactory
 from Products.Five import BrowserView
-
-#from bda.plone.cart.interfaces.ICartDataProvider import  get_data_provider
-from bda.plone.shopviews import shopviewsMessageFactory  as _
-
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.interfaces import IFolderish
+from ..interfaces import IProduct
 
 
-class IColorsView(Interface):
+_ = MessageFactory('bda.plone.shopviews')
+
+
+class Listing(BrowserView):
+    """Product Listing.
     """
-    Redirect  view interface
-    """
-    
-class IProductsView(Interface):
-    """
-    Products  view interface
-    """
-    
-    #def currency(self):
-    #    """Get the currency"""
-        
-    def test():
-        """ test method"""
-        
-    def all_keywords():
-        """ get all keywords in folder so we can sort on them """
+    image_scale = 'thumb'
 
-    def colors():
-        """ get (all) color (field) in your content type for folder """
+    @property
+    def products(self):
+        cat = getToolByName(self.context, 'portal_catalog')
+        ret = list()
+        query = {
+            'path': {
+                'query': '/'.join(self.context.getPhysicalPath()),
+                'depth': 1,
+            },
+        }
+        for brain in cat(**query):
+            obj = brain.getObject()
+            if not IProduct.providedBy(obj):
+                continue
+            image = None
+            if obj.image:
+                scales = obj.restrictedTraverse('@@images')
+                scale = scales.scale('image', self.image_scale)
+                if scale:
+                    image = scale.tag(css_class='product_listing_image')
+            ret.append({
+               'obj': obj,
+               'preview': image,
+            })
+        return ret
 
-    def variations():
-        """ get (all) variation (field) in your content type for folder """
 
-class ColorsView(BrowserView):
+class Product(BrowserView):
+    """Product view.
     """
-    Browser view that does the following.
-    - redirects to parent folder of product.
-    - sets color to context's color
-    - uses this in the folder view
-    """
-    implements(IColorsView)
-    
-    
-    def __call__(self):
-        request = self.request
-        color = self.context.color
-        redirect_url = self.context.aq_parent.absolute_url() + '/productlist_view?color=' + color
-        #return self.context.redirect(redirect_url)
-        return redirect_url
+    image_scale = 'mini'
 
-class ProductsView(BrowserView):
-    """
-    Products browser view
-    """
-    implements(IProductsView)
-    
-    #property
-    #def currency(self):
-    #    return self.data_provider.currency
-
-    def test(self):
-        """
-        test method
-        """
-        
-        dummy = _(u'a dummy string')
-        return {'dummy': dummy}
-
-    def find_objects(self):
-        #not working at the moment
-        #so the same code is 3 times below
-        catalog = getToolByName(self, 'portal_catalog')
-        if context.is_folderish: 
-            folder_path = '/'.join(context.getPhysicalPath())
-        else:
-            folder_path = '/'.join(context.aq_parent.getPhysicalPath())
-        results = []
-        results = catalog.searchResults(path={'query': folder_path})
-        return results
-                
-    @property    
-    def all_keywords(self):
-        #results = self.find_objects
-        context = self.context
-        catalog = getToolByName(self, 'portal_catalog')
-        #if IFolderish.isProvidedBy(context.aq_base): 
-        folder_path = '/'.join(context.getPhysicalPath())
-        #else:
-        #    folder_path = '/'.join(context.aq_parent.getPhysicalPath())
-        results = []
-        results = catalog.searchResults(path={'query': folder_path})
-        
-        tags = set()
-        for item in results:
-            tags.update(item.Subject)
-        return sorted(tags)
-        
-    @property    
-    def variations(self):
-        #results = self.find_objects
-        context = self.context
-        catalog = getToolByName(self, 'portal_catalog')
-        #if IFolderish.isProvidedBy(context.aq_base): 
-        folder_path = '/'.join(context.getPhysicalPath())
-        #else:
-        #    folder_path = '/'.join(context.aq_parent.getPhysicalPath())
-        results = []
-        results = catalog.searchResults(path={'query': folder_path})
-        
-        tags = []
-        for item in results:
-            tags.append(item.variation)
-        return sorted(tags)
-        
-    @property    
-    def colors(self):
-        #results = self.find_objects
-        context = self.context
-        parent = context.aq_parent.aq_inner
-        catalog = getToolByName(self, 'portal_catalog')
-        folder_path = '/'.join(parent.getPhysicalPath())
-        results = []
-        results = catalog.searchResults(path={'query': folder_path})
-        
-        colors = []
-        for item in results:
-            if item.color:
-                colors.append(item.color)
-        return sorted(colors)
-
-    @property    
-    def get_groups(self):
-        current = api.user.get_current()
-        groups_tool = getToolByName(self, 'portal_groups')
-        return groups_tool.getGroupsByUserId(current)
-    
-    @property    
-    def get_user(self):
-        return  api.user.get_current()
-        
-        
-    #@property    
-    #def get_group(self):       
-    #    return plone.api.user.get_users(groupname='forhandler')
-        
+    @property
+    def image(self):
+        if not self.context.image:
+            return None
+        scales = self.context.restrictedTraverse('@@images')
+        scale = scales.scale('image', self.image_scale)
+        if not scale:
+            return None
+        return scale.tag(css_class='product_image')
