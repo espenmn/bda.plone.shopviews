@@ -65,7 +65,7 @@ Productview
 ============
 
 - The producview is intended as a view for a "Product. The look is something like how the items here are presented (click on them):  http://www.bmh.no/nettbutikk/tilbehor
-
+- Every Rich Text field will get its own tab.
 
 The folder (listing) views
 ===========================
