@@ -1,11 +1,14 @@
 from zope.interface import implements, Interface, Attribute
 from Products.Five import BrowserView
 
-#from bda.plone.cart.interfaces.ICartDataProvider import  get_data_provider
 from bda.plone.shopviews import shopviewsMessageFactory  as _
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import IFolderish
+
+from plone.dexterity.utils import iterSchemata
+from zope.schema import getFields
+from plone.dexterity.interfaces import IDexterityContent
 
 
 class IColorsView(Interface):
@@ -32,6 +35,9 @@ class IProductsView(Interface):
 
     def variations():
         """ get (all) variation (field) in your content type for folder """
+
+    def rtfields():
+        """ get all rich text fields """
 
 class ColorsView(BrowserView):
     """
@@ -130,7 +136,20 @@ class ProductsView(BrowserView):
                 colors.append(item.color)
         return sorted(colors)
 
-    @property    
+    @property
+    def rtfields(self):
+        richtext_fields = []
+        context=self.context
+        if IDexterityContent.providedBy(context):
+            for schemata in iterSchemata(context):
+                for name, field in getFields(schemata).items():
+                    #checking for rich text field
+                    #if isinstance(field, RichText):
+                    if str(field.__class__) == "<class 'plone.app.textfield.RichText'>":
+                        richtext_fields.append(name)
+        return richtext_fields
+
+    @property
     def get_groups(self):
         current = api.user.get_current()
         groups_tool = getToolByName(self, 'portal_groups')

@@ -16,17 +16,32 @@
                                   scale python:scales.scale('image', 'preview')"
                       tal:replace="structure python:scale and scale.tag(css_class='ProductImage') or None" />      
          <!-- the tabs -->
-         <ul class="tabs">
-            <li tal:condition="context/body"><a href="#">Description</a></li>
-            <li tal:condition="context/teknisk_informasjon"><a href="#">Specifications</a></li>
-         </ul> 
+ 		<ul class="tabs">
+    		<li tal:repeat="rtfield view/rtfields">
+        		<a href="#" tal:condition="context/?rtfield">
+            		<span tal:replace="rtfield/title" />
+        		</a>
+    		</li>
+   			<li tal:condition="exists:context/relatedItems">
+      			<a href="#">Related</a>
+    		</li>
+  		</ul>
          <!-- tab "panes" -->
-         <div class="panes">
-             <div tal:content="structure context/body/output" 
-                  tal:condition="context/body" />
-             <div tal:content="structure context/teknisk_informasjon/output"  
-                  tal:condition="context/teknisk_informasjon"/>
-         </div>
+         <div class="shopview_panes">
+    		<tal:rtfields tal:repeat="rtfield view/rtfields">
+        		<div tal:condition="context/?rtfield" tal:content="structure context/?rtfield/output" />
+    		</tal:rtfields>
+    		<div tal:condition="exists:context/relatedItems">
+      			<ul tal:repeat="item context/relatedItems">
+        			<li tal:define="item_object python:item.to_object;">
+          				<a href="" tal:attributes="href item_object/absolute_url">
+            				<span tal:content="item_object/Title" />
+          				</a>
+          				<span tal:content="item_object/Description" />
+        			</li>
+      			</ul>
+    		</div>
+  		</div>
       </metal:block>
   </metal:content-core>
 
