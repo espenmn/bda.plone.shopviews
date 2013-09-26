@@ -27,7 +27,7 @@
     		</li>
   		</ul>
          <!-- tab "panes" -->
-         <div class="shopview_panes">
+         <div class="panes">
     		<tal:rtfields tal:repeat="rtfield view/rtfields">
         		<div tal:condition="context/?rtfield" tal:content="structure context/?rtfield/output" />
     		</tal:rtfields>
