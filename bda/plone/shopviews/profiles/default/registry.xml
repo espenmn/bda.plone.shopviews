@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<registry>
+  <records interface="bda.plone.shopviews.interfaces.IShopviewsSettings">
+    <value key="shopviews_fields"></value>
+  </records>
+</registry>
+
+
+    

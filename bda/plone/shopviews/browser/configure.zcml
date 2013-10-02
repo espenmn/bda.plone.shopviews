@@ -1,11 +1,20 @@
-<configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="bda.plone.shopviews">
-
+<configure xmlns="http://namespaces.zope.org/zope"
+            xmlns:browser="http://namespaces.zope.org/browser"
+            i18n_domain="bda.plone.shopviews">
+            
   <include package="plone.app.contentmenu" />
+  
 
-  <!-- -*- extra stuff goes here -*- -->
+  <!-- -*- control panel -*- -->
+
+  <!-- controlpanel -->
+  <browser:page
+    name="shopviews_controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".controlpanel.ShopviewsSettingsControlPanel"
+    permission="cmf.ManagePortal" />
+
+  <!-- -*- extra views goes here -*- -->
 
   <browser:page
       for="*"

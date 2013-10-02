@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<object
+    name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="bda.plone.shopviews"
+    purge="False">
+
+  <configlet
+    title="Shopviews settings"
+    action_id="bdashopviews"
+    appId="bda.plone.shopviews"
+    category="Products"
+    url_expr="string:${portal_url}/@@shopviews_controlpanel" 
+    visible="True"
+    i18n:attributes="title">
+    <permission>Manage portal</permission>
+  </configlet>
+
+</object>
