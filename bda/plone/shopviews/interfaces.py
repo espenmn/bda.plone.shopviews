@@ -1,25 +1,19 @@
 """ Define interfaces for bda.plone.shopviews.
 """
 
-from zope.interface import (
-    Interface,
-    Attribute,
-)
-
+from z3c.form import interfaces
 from zope import schema
+from zope.interface import Interface
 from zope.i18nmessageid import MessageFactory
 
 _ = MessageFactory('bda.plone.shop')
 
-#import zope.interface
 #from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 
 class IShopviews(zope.interface.Interface):
     """ A layer specific for this add-on product.
-
     This interface is referred in browserlayer.xml.
-
     All views and viewlets register against this layer will appear on
     your Plone site only when the add-on installer has been run.
     """
